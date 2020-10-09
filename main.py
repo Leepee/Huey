@@ -46,7 +46,8 @@ emoji_index = {
 
 
 
-bulb = Bulb("192.168.1.116")
+bulb = Bulb("192.168.1.115")
+bulb2 = Bulb("192.168.1.134")
 
 
 def clamp(num, min_value, max_value):
@@ -169,11 +170,27 @@ async def colour(ctx, arg):
     except ValueError as valError:
         await ctx.send('Failed: ' + str(valError))
 
+@client.command()
+async def colour2(ctx, arg):
+    try:
+        await ctx.send('Setting color to ' + arg + ' (' + str(webcolors.name_to_rgb(arg)) + ')')
+        r, g, b = webcolors.name_to_rgb(arg)
+        bulb2.set_rgb(r + 1, g + 1, b + 1)
+    except ValueError as valError:
+        await ctx.send('Failed: ' + str(valError))
 
 @client.command()
 async def brightness(ctx, arg):
     if str.isnumeric(arg):
         bulb.set_brightness(clamp(int(arg), 0, 100))
+        await ctx.send('Setting brightness to ' + str(clamp(int(arg), 0, 100)))
+    else:
+        await ctx.send('Failed: Please give me an integer input')
+
+@client.command()
+async def brightness2(ctx, arg):
+    if str.isnumeric(arg):
+        bulb2.set_brightness(clamp(int(arg), 0, 100))
         await ctx.send('Setting brightness to ' + str(clamp(int(arg), 0, 100)))
     else:
         await ctx.send('Failed: Please give me an integer input')
@@ -192,7 +209,15 @@ async def random_colour(ctx):
 
     bulb.set_rgb(r, g, b)
 
-    await ctx.send('Setting a random colour! (' + str(r) + ',' + str(g) + ',' + str(b) + ')')
+    await ctx.send('Setting bulb 1 to a random colour! (' + str(r) + ',' + str(g) + ',' + str(b) + ')')
+
+    r = random.randint(1, 255)
+    g = random.randint(1, 255)
+    b = random.randint(1, 255)
+
+    bulb2.set_rgb(r, g, b)
+
+    await ctx.send('Setting bulb 2 to a random colour! (' + str(r) + ',' + str(g) + ',' + str(b) + ')')
 
 
 client.run(TOKEN)
